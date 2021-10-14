@@ -18,4 +18,6 @@ CONTENIDO2=$(./modpoll -m enc -t4:hex -a $3 -r 3060 -c 2 -1 -o 1 $1 -p 1024);
 
 echo "$TIMESTAMP$IP$EQUIPO$IDREM$CONTENIDO1 $CONTENIDO2";
 
-curl -X POST -H "Content-Type: text/plain" -d "$TIMESTAMP$IP$EQUIPO$IDREM$CONTENIDO1$CONTENIDO2" $HOST
+SALIDA_API=$(curl -X POST -H "Content-Type: text/plain" -d "$TIMESTAMP$IP$EQUIPO$IDREM$CONTENIDO1$CONTENIDO2" $HOST)
+
+mongo --eval "db.LogCargaOnline.insertOne({timestamp: '"$TIMESTAMP"', url: '"$HOST"', respuestaModpoll: '"$CONTENIDO1$CONTENIDO2"', salidaApi: '"$SALIDA_API"'});" bodenor

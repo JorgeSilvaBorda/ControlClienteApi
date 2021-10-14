@@ -93,7 +93,7 @@ public class MSLectura {
 			//Se extraen los campos de cálculo de circutor desde el mensaje
 			LecturaRemarcador lecturaRemarcador = LecturaCircutorCVMC10.parseItems(contenido, lectura).toLecturaRemarcador();
 			//Activar este una vez se haya completado la migración
-			//lecturaLegadoClient.postLecturaCircutorLegado(new CircutorCVMC10().fromLectura(LecturaCircutorCVMC10.parseItems(contenido, lectura)));
+			lecturaLegadoClient.postLecturaCircutorLegado(new CircutorCVMC10().fromLectura(LecturaCircutorCVMC10.parseItems(contenido, lectura)));
 			return procesarLecturaRemarcador(lecturaRemarcador);
 		}
 
@@ -149,7 +149,7 @@ public class MSLectura {
 			LecturaRemarcador lecturaRemarcador = l1.toLecturaRemarcador();
 			//LecturaRemarcador lecturaRemarcador = LecturaSchneiderPM710.parseItems(contenido, lectura).toLecturaRemarcador();
 			//Activar este una vez se haya completado la migración
-			//lecturaLegadoClient.postLecturaSchneiderPM710Legado(new SchneiderPM710().fromLectura(LecturaSchneiderPM710.parseItems(contenido, lectura)));
+			lecturaLegadoClient.postLecturaSchneiderPM710Legado(new SchneiderPM710().fromLectura(LecturaSchneiderPM710.parseItems(contenido, lectura)));
 			return procesarLecturaRemarcador(lecturaRemarcador);
 		}
 
@@ -205,7 +205,7 @@ public class MSLectura {
 			//LecturaRemarcador lecturaRemarcador = LecturaSchneiderPM5300.parseItemsMigracion(contenido, lectura).toLecturaRemarcador();
 			
 			//Activar este una vez se haya completado la migración
-			//lecturaLegadoClient.postLecturaSchneiderPM5300Legado(new SchneiderPM5300().fromLectura(LecturaSchneiderPM5300.parseItems(contenido, lectura)));
+			lecturaLegadoClient.postLecturaSchneiderPM5300Legado(new SchneiderPM5300().fromLectura(LecturaSchneiderPM5300.parseItems(contenido, lectura)));
 			return procesarLecturaRemarcador(lecturaRemarcador);
 		}
 

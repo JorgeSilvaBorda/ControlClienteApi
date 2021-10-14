@@ -16,4 +16,4 @@ echo $TIMESTAMP$IP$EQUIPO$IDREM$CONTENIDO
 
 SALIDA_API=$(curl -X POST -H "Content-Type: text/plain" -d "$TIMESTAMP$IP$EQUIPO$IDREM$CONTENIDO" $HOST)
 
-mongo --eval "db.LogCargaOnline.insertOne({timestamp: '"$TIMESTAMP"', url: '"$HOST"', respuestaModpoll: '"$CONTENIDO"', salidaApi: '"$SALIDA_API"'});" bodenor
+mongo --eval "db.LogCargaOnline.insertOne({timestamp: '"$TIMESTAMP"', ipConversor: '"$1"', numPuerto: "$3", numConversor: "$2", url: '"$HOST"', respuestaModpoll: '"$CONTENIDO"', salidaApi: '"$SALIDA_API"'});" bodenor

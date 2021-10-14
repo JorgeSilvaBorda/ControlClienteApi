@@ -147,10 +147,16 @@ public class LecturaSchneiderPM5300 implements Serializable {
     }
 
     public Double getEnergia() {
+		if(getItem1() == null){
+			return null;
+		}
         return this.item1;
     }
 
     public Double getPotencia() {
+		if(getItem43() == null){
+			return null;
+		}
         return this.item43;
     }
 

@@ -1,7 +1,7 @@
-#!/bin/bash
-export APIHOST=http://192.168.100.228:10000
-
-./batch/lectura-circutor.sh 192.168.102.181 2 1 #"192.168.102.181" "2" "1"
+#!/bin/sh
+sh /usr/src/modpoll/checkequipo2.sh
+sleep 1
+php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.102.181" "2" "1"
 sleep 1
 php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.102.181" "2" "2"
 sleep 1
@@ -202,13 +202,28 @@ sleep1
 php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.18.254" "40" "8"
 sh /usr/src/modpoll/checkequipo15.sh
 sleep1
-php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.170.201" "15" "1"
-sleep1
 php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.170.201" "15" "2"
+sleep1
+php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.170.201" "15" "3"
+sleep1
+php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.170.201" "15" "5"
+sleep1
+php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.170.201" "15" "6"
 sh /usr/src/modpoll/checkequipo16.sh
 sleep1
 php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.102.195" "16" "1"
 sh /usr/src/modpoll/checkequipo17.sh
 sleep1
 php /usr/src/modpoll/modbus-circutorcvmC10-V2.php "192.168.102.196" "17" "1"
+sh /usr/src/modpoll/checkequipo41.sh
+sleep1
+php /usr/src/modpoll/modbus-schneiderPM710-V2.php "192.168.96.9" "41" "1"
+sleep1
+php /usr/src/modpoll/modbus-schneiderPM710-V2.php "192.168.96.9" "41" "2"
+sleep1
+php /usr/src/modpoll/modbus-schneiderPM710-V2.php "192.168.96.9" "41" "3"
+sleep1
+php /usr/src/modpoll/modbus-schneiderPM5300-new.php "192.168.96.9" "41" "4"
+sleep1
+php /usr/src/modpoll/modbus-schneiderPM710-V2.php "192.168.96.9" "41" "5"
 exit

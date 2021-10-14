@@ -183,22 +183,28 @@ public class LecturaSchneiderPM710 implements Serializable {
     }
 
     public boolean esCalculable() {
-        return getItem1() != null && getItem2() != null && getItem109() != null;
+        return getItem1() != null && getItem2() != null && getItem7() != null && getItem108() != null && getItem109() != null;
     }
 
     public Double getEnergia() {
-        if (this.item2 >= 0) {
-            Double salida = ((this.item1 * 65536) + this.item2) * Math.pow(BASE_POTENCIA, this.item109);
+		if(getItem2() == null || getItem109() == null){
+			return null;
+		}
+        if (this.item2 >= 0.0d) {
+            Double salida = ((this.item1 * 65536.0d) + this.item2) * Math.pow(BASE_POTENCIA, this.item109);
             return salida;
         }
-        if (this.item2 < 0) {
-            Double salida = (((this.item1 * 65536) + (this.item2 + 65536)) * Math.pow(BASE_POTENCIA, this.item109));
+        if (this.item2 < 0.0d) {
+            Double salida = (((this.item1 * 65536.0d) + (this.item2 + 65536.0d)) * Math.pow(BASE_POTENCIA, this.item109));
             return salida;
         }
-        return null;
+		return null;
     }
 
     public Double getPotencia() {
+		if(getItem7() == null || getItem108() == null){
+			return null;
+		}
         Double salida = this.item7 * Math.pow(BASE_POTENCIA, this.item108);
         return salida;
     }
@@ -232,6 +238,8 @@ public class LecturaSchneiderPM710 implements Serializable {
     }
 
     public static LecturaSchneiderPM710 parseItems(String contenido, Lectura lectura) {
+		System.out.println("Entra a parsear");
+		System.out.println(contenido);
         String regexp = "";
         Pattern pattern;
         Matcher matcher;
@@ -242,21 +250,26 @@ public class LecturaSchneiderPM710 implements Serializable {
         matcher = pattern.matcher(contenido);
 
         //Recorrer la cantidad de coincidencias del patrón
-        while (matcher.find()) {//Campos específicos de modelo circutorcvmC10
+        while (matcher.find()) {//Campos específicos de modelo SCHNEIDERPM710
             if (matcher.group(2).trim().equals("4000")) {
                 lecturaSchneiderPM710.setItem1(Double.parseDouble(matcher.group(6) + matcher.group(7)));
+				lecturaSchneiderPM710.getItem1();
             }
             if (matcher.group(2).trim().equals("4001")) {
                 lecturaSchneiderPM710.setItem2(Double.parseDouble(matcher.group(6) + matcher.group(7)));
+				lecturaSchneiderPM710.getItem2();
             }
             if (matcher.group(2).trim().equals("4006")) {
                 lecturaSchneiderPM710.setItem7(Double.parseDouble(matcher.group(6) + matcher.group(7)));
+				lecturaSchneiderPM710.getItem7();
             }
             if (matcher.group(2).trim().equals("4107")) {
                 lecturaSchneiderPM710.setItem108(Double.parseDouble(matcher.group(6) + matcher.group(7)));
+				lecturaSchneiderPM710.getItem108();
             }
             if (matcher.group(2).trim().equals("4108")) {
                 lecturaSchneiderPM710.setItem109(Double.parseDouble(matcher.group(6) + matcher.group(7)));
+				lecturaSchneiderPM710.getItem109();
             }
         }
 

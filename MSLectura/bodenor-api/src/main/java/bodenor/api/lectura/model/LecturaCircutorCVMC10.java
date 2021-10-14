@@ -166,6 +166,9 @@ public class LecturaCircutorCVMC10 implements Serializable {
     }
     
     public Double getEnergia() {
+		if(getItem95() == null || getItem96() == null){
+			return null;
+		}
         if (this.item96 >= 0) {
             return (this.item95 * 65536) + this.item96;
         } else {
@@ -174,6 +177,9 @@ public class LecturaCircutorCVMC10 implements Serializable {
     }
 
     public Double getPotencia() {
+		if(getItem50() == null || getItem49() == null){
+			return null;
+		}
         if (this.item50 >= 0) {
             return (((Double) this.item49 * 65536) + (Double) this.item50) / 1000;
         } else {

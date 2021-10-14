@@ -7,6 +7,10 @@ import bodenor.api.consumo.model.ConsumoDiario;
 import bodenor.api.consumo.model.ConsumoDiarioResponse;
 import bodenor.api.empalme.model.Empalme;
 import bodenor.api.instalacion.model.Instalacion;
+import bodenor.api.lectura.legado.LecturaLegadoClient;
+import bodenor.api.lectura.legado.model.CircutorCVMC10;
+import bodenor.api.lectura.legado.model.SchneiderPM5300;
+import bodenor.api.lectura.legado.model.SchneiderPM710;
 import bodenor.api.lectura.model.Lectura;
 import bodenor.api.lectura.model.LecturaCircutorCVMC10;
 import bodenor.api.lectura.model.LecturaRemarcador;
@@ -37,12 +41,15 @@ public class MSLectura {
 	@RestClient
 	RemarcadorClient remarcadorClient;
 
+	@Inject
+	@RestClient
+	LecturaLegadoClient lecturaLegadoClient;
+
 	@Path("/circutorcvmc10")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.TEXT_PLAIN)
 	public ConsumoDiario postLecturaCircutorCVMC10(String contenido) {
-
 		System.out.println("Entra CircutorCVMC10");
 		Lectura lectura = Lectura.getLectura(contenido);
 
@@ -85,6 +92,8 @@ public class MSLectura {
 			}
 			//Se extraen los campos de cálculo de circutor desde el mensaje
 			LecturaRemarcador lecturaRemarcador = LecturaCircutorCVMC10.parseItems(contenido, lectura).toLecturaRemarcador();
+			//Activar este una vez se haya completado la migración
+			//lecturaLegadoClient.postLecturaCircutorLegado(new CircutorCVMC10().fromLectura(LecturaCircutorCVMC10.parseItems(contenido, lectura)));
 			return procesarLecturaRemarcador(lecturaRemarcador);
 		}
 
@@ -98,16 +107,52 @@ public class MSLectura {
 		System.out.println("Entra SchneiderPM710");
 		Lectura lectura = Lectura.getLectura(contenido);
 
-		if (!lectura.esProcesable()) {
-			//No se puede procesar ni obtener la anterior.
-			System.out.println("No se puede procesar la lectura");
-			return new ConsumoDiario();
+		if (contenido.contains("MANUAL[true]")) {
+			System.out.println("Entra a lectura Manual");
+
+			//Se procesa una lectura manual (sin potencia) que viene llegando.
+			LecturaRemarcador lecturaRemarcador = new LecturaRemarcador();
+			lecturaRemarcador.setAnio(lectura.getAnio());
+			lecturaRemarcador.setCalculable(true);
+			lecturaRemarcador.setDia(lectura.getDia());
+			lecturaRemarcador.setManual(true);
+
+			String regexp = "";
+			Pattern pattern;
+			Matcher matcher;
+
+			regexp = "(LECTURA\\[)([0-9]{1,9})(\\])";
+			pattern = Pattern.compile(regexp);
+			matcher = pattern.matcher(contenido);
+			if (matcher.find()) {
+				lecturaRemarcador.setEnergia(Double.parseDouble(matcher.group(2)));
+			}
+
+			lecturaRemarcador.setNumRemarcador(lectura.getNumremarcador());
+			lecturaRemarcador.setMes(lectura.getMes());
+			lecturaRemarcador.setTimestamp(lectura.getTimestamp());
+			lecturaRemarcador.setTipoRemarcador("schneiderpm710");
+			lecturaRemarcador.setFecha(lectura.getFecha());
+			bodenor.api.com.Util.imprimirClaseJson(lecturaRemarcador);
+
+			return procesarLecturaRemarcador(lecturaRemarcador);
+
+		} else {
+			if (!lectura.esProcesable()) {
+				//No se puede procesar ni obtener la anterior.
+				System.out.println("No se puede procesar la lectura");
+				return new ConsumoDiario();
+			}
+
+			//Se extraen los campos de cálculo de circutor desde el mensaje
+			LecturaSchneiderPM710 l1 = LecturaSchneiderPM710.parseItems(contenido, lectura);
+			LecturaRemarcador lecturaRemarcador = l1.toLecturaRemarcador();
+			//LecturaRemarcador lecturaRemarcador = LecturaSchneiderPM710.parseItems(contenido, lectura).toLecturaRemarcador();
+			//Activar este una vez se haya completado la migración
+			//lecturaLegadoClient.postLecturaSchneiderPM710Legado(new SchneiderPM710().fromLectura(LecturaSchneiderPM710.parseItems(contenido, lectura)));
+			return procesarLecturaRemarcador(lecturaRemarcador);
 		}
 
-		//Se extraen los campos de cálculo de circutor desde el mensaje
-		LecturaRemarcador lecturaRemarcador = LecturaSchneiderPM710.parseItems(contenido, lectura).toLecturaRemarcador();
-
-		return procesarLecturaRemarcador(lecturaRemarcador);
 	}
 
 	@Path("/schneiderpm5300")
@@ -118,17 +163,52 @@ public class MSLectura {
 		System.out.println("Entra SchneiderPM5300");
 		Lectura lectura = Lectura.getLectura(contenido);
 
-		if (!lectura.esProcesable()) {
-			//No se puede procesar ni obtener la anterior.
-			System.out.println("No se puede procesar la lectura");
-			return new ConsumoDiario();
+		if (contenido.contains("MANUAL[true]")) {
+			System.out.println("Entra a lectura Manual");
+
+			//Se procesa una lectura manual (sin potencia) que viene llegando.
+			LecturaRemarcador lecturaRemarcador = new LecturaRemarcador();
+			lecturaRemarcador.setAnio(lectura.getAnio());
+			lecturaRemarcador.setCalculable(true);
+			lecturaRemarcador.setDia(lectura.getDia());
+			lecturaRemarcador.setManual(true);
+
+			String regexp = "";
+			Pattern pattern;
+			Matcher matcher;
+
+			regexp = "(LECTURA\\[)([0-9]{1,9})(\\])";
+			pattern = Pattern.compile(regexp);
+			matcher = pattern.matcher(contenido);
+			if (matcher.find()) {
+				lecturaRemarcador.setEnergia(Double.parseDouble(matcher.group(2)));
+			}
+
+			lecturaRemarcador.setNumRemarcador(lectura.getNumremarcador());
+			lecturaRemarcador.setMes(lectura.getMes());
+			lecturaRemarcador.setTimestamp(lectura.getTimestamp());
+			lecturaRemarcador.setTipoRemarcador("schneiderpm5300");
+			lecturaRemarcador.setFecha(lectura.getFecha());
+			bodenor.api.com.Util.imprimirClaseJson(lecturaRemarcador);
+
+			return procesarLecturaRemarcador(lecturaRemarcador);
+
+		} else {
+			if (!lectura.esProcesable()) {
+				//No se puede procesar ni obtener la anterior.
+				System.out.println("No se puede procesar la lectura");
+				return new ConsumoDiario();
+			}
+
+			//Se extraen los campos de cálculo de circutor desde el mensaje
+			LecturaRemarcador lecturaRemarcador = LecturaSchneiderPM5300.parseItems(contenido, lectura).toLecturaRemarcador();
+			//LecturaRemarcador lecturaRemarcador = LecturaSchneiderPM5300.parseItemsMigracion(contenido, lectura).toLecturaRemarcador();
+			
+			//Activar este una vez se haya completado la migración
+			//lecturaLegadoClient.postLecturaSchneiderPM5300Legado(new SchneiderPM5300().fromLectura(LecturaSchneiderPM5300.parseItems(contenido, lectura)));
+			return procesarLecturaRemarcador(lecturaRemarcador);
 		}
 
-		//Se extraen los campos de cálculo de circutor desde el mensaje
-		//LecturaRemarcador lecturaRemarcador = LecturaSchneiderPM5300.parseItems(contenido, lectura).toLecturaRemarcador();
-		LecturaRemarcador lecturaRemarcador = LecturaSchneiderPM5300.parseItemsMigracion(contenido, lectura).toLecturaRemarcador();
-
-		return procesarLecturaRemarcador(lecturaRemarcador);
 	}
 
 	private ConsumoDiario procesarLecturaRemarcador(LecturaRemarcador lecturaRemarcador) {
@@ -142,10 +222,11 @@ public class MSLectura {
 
 			ConsumoDiarioResponse response = consumoDiarioClient.getLastConsumoDiario(lecturaRemarcador.getNumRemarcador(), formatterDate.format(lecturaRemarcador.getFecha()));
 			ConsumoDiario anterior = response.getConsumoDiario();
-			anterior.setId(new ObjectId(response.getIdString()));
-			if (anterior.getId() == null) {
+			
+			if (anterior == null) {
 				return new ConsumoDiario(); //Retorna Vacío
 			}
+			anterior.setId(new ObjectId(response.getIdString()));
 			//Se modifica el anterior para hacer update con delta cero y last lectura con valores nulos
 			bodenor.api.consumo.model.Lectura nuevaLast = anterior.getLastLectura();
 			bodenor.api.remarcador.model.Remarcador r = remarcadorClient.getRemarcadorNumRemarcador(anterior.getNumRemarcador());
@@ -438,7 +519,7 @@ public class MSLectura {
 					anterior.setPromedioDemandaHoraPunta(null);
 					if (newLastLectura.getPotencia() != null) {
 						anterior.setPromedioDemanda(newLastLectura.getPotencia());
-						if (newLastLectura.getHh()>= 18 && newLastLectura.getHh() <= 23) {
+						if (newLastLectura.getHh() >= 18 && newLastLectura.getHh() <= 23) {
 							anterior.setPromedioDemandaHoraPunta(newLastLectura.getPotencia());
 						}
 					}
